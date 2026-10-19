@@ -1,1 +1,61 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --bg: #f3f6fb;
+  --surface: #ffffff;
+  --ink: #0f172a;
+  --muted: #5b6678;
+  --line: #dde4ee;
+  --accent: #1d4ed8;
+  --accent-strong: #1e40af;
+  --accent-soft: #e6eefc;
+  --warn: #9a3412;
+  --warn-soft: #fff0e6;
+  --good: #166534;
+  --good-soft: #e6f4ea;
+
+  --radius-s: 9px;
+  --radius-m: 15px;
+  --radius-l: 22px;
+  --shadow-s: 0 2px 8px rgba(15, 23, 42, 0.045);
+  --shadow-m: 0 14px 34px rgba(15, 23, 42, 0.11);
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  --font-display: Sora, "Segoe UI", system-ui, sans-serif;
+  --font-body: Manrope, "Segoe UI", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { min-width: 320px; background: var(--bg); scroll-behavior: smooth; }
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.55;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { font-family: var(--font-display); }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid rgba(29, 78, 216, 0.35); outline-offset: 3px; }
+::selection { color: #fff; background: var(--accent); }
+
+/* scroll reveal (see directives/reveal.ts) */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 500ms var(--ease), transform 500ms var(--ease);
+  transition-delay: calc(var(--i, 0) * 60ms);
+}
+.reveal.in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}

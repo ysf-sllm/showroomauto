@@ -1,0 +1,133 @@
+<section class="catalog">
+  <div class="toolbar">
+    <div class="toolbar-row">
+      <div class="search-panel">
+        <fa-icon [icon]="icons.faMagnifyingGlass" aria-hidden="true"></fa-icon>
+        <label class="visually-hidden" for="car-search">Search by brand or model</label>
+        <input
+          #searchInput
+          id="car-search"
+          type="search"
+          placeholder="Search by brand or model"
+          autocomplete="off"
+          [value]="searchTerm()"
+          (input)="searchTerm.set($any($event.target).value)"
+        />
+        @if (searchTerm()) {
+          <button class="icon-btn" type="button" aria-label="Clear search" (click)="searchTerm.set('')">
+            <fa-icon [icon]="icons.faXmark"></fa-icon>
+          </button>
+        } @else {
+          <kbd aria-hidden="true">/</kbd>
+        }
+      </div>
+
+      <label class="select">
+        <span>Sort</span>
+        <select [value]="sort()" (change)="setSort($any($event.target).value)">
+          <option value="default">Featured</option>
+          <option value="price-asc">Price: low to high</option>
+          <option value="price-desc">Price: high to low</option>
+          <option value="power-desc">Power: high to low</option>
+        </select>
+      </label>
+
+      <div class="view-toggle" role="group" aria-label="Layout">
+        <button type="button" aria-label="Grid view" [attr.aria-pressed]="view() === 'grid'" (click)="view.set('grid')">
+          <fa-icon [icon]="icons.faTableCellsLarge"></fa-icon>
+        </button>
+        <button type="button" aria-label="List view" [attr.aria-pressed]="view() === 'list'" (click)="view.set('list')">
+          <fa-icon [icon]="icons.faList"></fa-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="toolbar-row">
+      <div class="chips" role="group" aria-label="Filter by brand">
+        <button class="chip" type="button" [class.active]="!selectedBrands().length" [attr.aria-pressed]="!selectedBrands().length" (click)="selectedBrands.set([])">All</button>
+        @for (b of brands(); track b) {
+          <button class="chip" type="button" [class.active]="selectedBrands().includes(b)" [attr.aria-pressed]="selectedBrands().includes(b)" (click)="toggleBrand(b)">{{ b }}</button>
+        }
+      </div>
+
+      <label class="price-range">
+        <span>Up to <strong>{{ priceLimit() }} DNT</strong></span>
+        <input
+          type="range"
+          step="5"
+          [min]="bounds().min"
+          [max]="bounds().max"
+          [value]="priceLimit()"
+          (input)="maxPrice.set(+$any($event.target).value)"
+        />
+      </label>
+    </div>
+  </div>
+
+  <div class="status">
+    <p aria-live="polite"><strong>{{ results().length }}</strong> of {{ autos().length }} cars</p>
+    @if (hasFilters()) {
+      <button class="link" type="button" (click)="reset()">Reset filters</button>
+    }
+  </div>
+
+  @if (results().length) {
+    <div class="container" [class.view-list]="view() === 'list'" [class.view-grid]="view() === 'grid'">
+      @for (auto of results(); track auto.id; let i = $index) {
+        <article
+          class="auto-card"
+          appReveal
+          [style.--i]="i % 6"
+          [class.open]="openId() === auto.id"
+        >
+          <div class="photo-wrap">
+            <img [src]="'images/' + auto.photo" [alt]="auto.brand + ' ' + auto.model" loading="lazy" />
+            @if (auto.availability <= 3) {
+              <span class="badge">Only {{ auto.availability }} left</span>
+            }
+          </div>
+
+          <div class="content">
+            <div class="head">
+              <div>
+                <p class="card-brand">{{ auto.brand }}</p>
+                <h3>{{ auto.model }}</h3>
+              </div>
+              <p class="price">{{ auto.price }} <span>DNT</span></p>
+            </div>
+
+            <ul class="specs">
+              <li><fa-icon [icon]="icons.faBolt" aria-hidden="true"></fa-icon> {{ auto.power }} CV</li>
+              <li><fa-icon [icon]="icons.faBoxesStacked" aria-hidden="true"></fa-icon> {{ auto.availability }} in stock</li>
+            </ul>
+
+            <div class="expand" [id]="'desc-' + auto.id">
+              <div class="expand-inner">
+                <p>{{ auto.description }}</p>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button
+                class="see-more"
+                type="button"
+                [attr.aria-expanded]="openId() === auto.id"
+                [attr.aria-controls]="'desc-' + auto.id"
+                (click)="toggleOpen(auto.id)"
+              >
+                {{ openId() === auto.id ? 'See less' : 'See more' }}
+                <fa-icon [icon]="icons.faChevronDown" aria-hidden="true"></fa-icon>
+              </button>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  } @else {
+    <div class="empty-state" role="status">
+      <h3>No cars match these filters</h3>
+      <p>Try another brand, raise the price limit or clear the search.</p>
+      <button class="primary" type="button" (click)="reset()">Reset filters</button>
+    </div>
+  }
+</section>

@@ -1,0 +1,9 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  padding: 24px clamp(16px, 4vw, 56px) 64px;
+}
+
+@media (max-width: 640px) {
+  :host { padding: 12px 12px 40px; }
+}
